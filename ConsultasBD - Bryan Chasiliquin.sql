@@ -1,3 +1,4 @@
+
 -- consultas de la base de datos Saludtotal
 use saludtotal;
 
@@ -156,7 +157,27 @@ from
     medicinafrecuentegeneric
 join medicinas mcom on mcom.id = mcg.medicinacomercial_id
 join medicinas mgen on mgen.id = mcg.medicinagenerica_id
+WHERE 
+    mcom.preicio > 5
+and mgem.precio < 5
 ;
+
+create view v_medicinagencom
+AS
+select 
+    mcom.id,
+    mcom.nombre as nombre_comercial 
+    mcg.medicinagenerica_id,
+    mgen.nombre,
+    mgen.precio,
+    mcon.precio - mgen.precio as diferencia
+from 
+    medicinafrecuentegeneric
+join medicinas mcom on mcom.id = mcg.medicinacomercial_id
+join medicinas mgen on mgen.id = mcg.medicinagenerica_id
+WHERE 
+    mcom.preicio > 5
+and mgem.precio < 5
 
 
 -- Caso: presentar una factura y sus detalles, que incluya,
@@ -229,3 +250,292 @@ CREATE TABLE factura_items (
   CONSTRAINT fk_item_factura FOREIGN KEY (factura_id) REFERENCES facturas(id) ON DELETE CASCADE,
   CONSTRAINT fk_item_medicamento FOREIGN KEY (medicamento_id) REFERENCES medicamentos(id)
 ) ENGINE=InnoDB;
+
+alter table facturas
+drop column total;
+
+use saludtotal;
+
+desc facturas;
+
+desc facturadetalle;
+
+select count (*) from factura;
+
+select count(*) from facturadetalle;
+
+select 
+    f.facturanumero,
+    f.fecha,
+    c.nombre
+
+FROM factura f 
+join cliente c on c.cedula = f.cedula
+where 
+    facruranemro = 'F00000000036'
+
+select 
+    fd.facturanumero,
+    fd.medicamiento_id,
+    m.nombre,
+    fd.precio,
+    fd.cantidad,
+    fd.precio * fd.cantidad as subtotal
+from facturadetalle
+
+join medicina m on m.id = fd.medicamiento_id
+WHERE
+    fd.facturanumero = 'F0000000016'
+
+desc facturadetalla;
+
+-- pie de la factura
+
+SELECT
+    sun (fd.precio * fd.cantidad) as subtotal
+FROM
+    medicinas
+where 
+
+
+
+-- mediante eluso del or 
+SELECT
+    *
+from
+medicinafrecuente
+WHERE
+    frecuente = 'SEM'
+or frecuencia = 'MEN'
+
+select * from v_
+
+update clientes
+set direccion = NULL
+where cedula in ('1000000008','10000000010','10000000012');
+
+
+select count (*) from medicinas;
+select count(*) from medicinafrecuente;
+
+select 
+    * 
+from medicins
+where id not IN
+(
+    select medicina_id from medicinafrecuente
+);
+SELECT
+    *   
+from medicinafrecuente mf m join medicinas m onm.id = mf.medicina_id;
+where mf,medicina_id is null;
+
+
+select
+    nombre,
+    fechanacimiento
+FROM
+    clientes
+ORDER BY
+    fechanacimiento desc;
+limit 1;
+
+-- caso: conocer las cinco medicinas mas caras de la farmacia 
+SELECT
+    nombre,
+    precio
+from medicinas
+WHERE
+    
+order by
+    precio 
+limt 5;
+-- caso: conocer las cinco medicinas mas bartas de la farmacia
+SELECT
+    nombre,
+    precio
+from medicinas
+WHERE
+    
+order by
+    precio 
+limt 5;
+-- caso: la medicina comercial mas barata
+SELECT
+    nombre,
+    precio
+from medicinas
+WHERE
+    tipo 'COM'
+order by
+    precio asc
+limt 1;
+-- caso: la medicina generica mas cara
+SELECT
+    nombre,
+    precio
+from medicinas
+    tipo 'GEN'
+order by
+    precio desc
+limt 1;
+
+-- caso: las cinco medicinas comercial con el menor descuento
+select 
+    id,
+    nombre,
+    precio,
+    descuento
+from mediicinafrecuente
+join medicina on id = medicina_id
+where tipo = 'COM'
+and descuento id not NULL
+ORDER BY
+    descuento
+limit 5;
+
+select * from medicinas where nombre like 'voltaren Su%'
+
+select * from medicinafrecuente where medicina_id=101;
+
+insert into medicinafrecuente values(
+    '1000000000000005',101, 'Dolor frecuente de rodilla','SEM'
+);
+
+select 
+    nombre
+from medicinas
+WHERE
+    id in(
+        SELECT
+            ID
+        from medicinafrecuente
+        join medicina on id = medicina_id
+        WHERE
+            tipo = 'COM'
+        order BY
+            descuento
+    );
+
+order BY
+
+
+-- caso: agrupacion
+select 
+    tipo,
+    count(*) as numero
+from cientes
+GROUP BY
+    tipo 
+;
+
+desc medicinas;
+select 
+    id,
+    nombre,
+    precio,
+    stock,
+    precio * stock
+from medicinas;
+
+select 
+    tipo,
+    sum(precio * stock)
+from medicinas
+GROUP BY
+    tipo;
+
+
+-- caso: facturas detalles. Valor monetario por medicina vendida
+
+select * from facturadetalle;
+
+SELECT
+    medicamento_id,
+    cantidad,
+    precio,
+
+
+
+-- caso: el mejor cliente
+SELECT 
+    fd.facturanumero,
+    f.cedula,
+    sum(fd.cantidad * fd.precio)
+FROM facturadetalle fd
+join facturas f on f.facturanuero = fd.facturanemro
+join 
+
+-- caso: proyeccion de la venta total del stock, tomando en cuanta 
+-- el descuento para las medicinas del plan de medicina frecuente
+
+select 
+    id,
+    nombre,
+    precio,
+    stock,
+    precio * stock
+from medicinas;
+
+SELECT
+    mf.medicina_id,
+    m.nombre,
+    m.precio,
+    m.stock,
+    mf.descuento --- descuento del plan 
+    m.precio *  (1-mf.descuento/100) as nuevo_precio
+from medicinafrecuente mf
+right join medicinas m on m.id  = mf.medicina_id
+where mf.descuento is null
+;
+
+select 
+    suma(nuevo_precio * stock)
+from 
+
+select curdate;
+
+
+-- caso: averiguar que medicinas vencen en el proximo mes.
+
+SELECT
+    id_medicamento,
+    nombre_medicamento,
+    fecha_vencimiento
+FROM
+    Medicamentos
+WHERE
+    fecha_vencimiento >= DATE_ADD(CURDATE() - DAY(CURDATE()) + INTERVAL 1 DAY, INTERVAL 1 MONTH)
+    AND fecha_vencimiento < DATE_ADD(CURDATE() - DAY(CURDATE()) + INTERVAL 1 DAY, INTERVAL 2 MONTH);
+
+
+select 
+    id,
+    nombre,
+    fechacaducidad
+FROM  
+    medicinas
+where 
+    fechacaducida >= date_add(last_date(curdate()), interval 1 day)
+    and fechadecaducidad <=
+                last_day(date_add (curdate(), interval 1 month))
+order BY
+    fechacaducidad;
+
+update medicinas
+set fechacaducidad= '2025-12-25'
+where id in (12,13,14,21,23);
+
+-- caso: cronograma de vencimineto de medicinas a tres meses vista
+SELECT
+    DATE_FORMAT(fecha_vencimiento, '%Y-%m') AS mes_vencimiento,
+    COUNT(*) AS cantidad_medicamentos
+FROM
+    Medicamentos
+WHERE
+    fecha_vencimiento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+GROUP BY
+    mes_vencimiento
+ORDER BY
+    mes_vencimiento;
+    
